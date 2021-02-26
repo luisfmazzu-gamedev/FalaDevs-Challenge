@@ -25,7 +25,14 @@ public class Locked_Door : MonoBehaviour
     [SerializeField]
     private string KeyTypeAccepted = "Any";
 
+    private Animator doorAnimator;
+
     public bool Locked { get => locked; set => locked = value; }
+
+    private void Awake()
+    {
+        doorAnimator = gameObject.GetComponent<Animator>();
+    }
 
     public bool AttemptUnlock(List<string> TypeOfKeys)
     {
@@ -34,6 +41,7 @@ public class Locked_Door : MonoBehaviour
             if (TypeOfKeys.Count >= 1)
             {
                 locked = false;
+                doorAnimator.Play("DoorOpen", 0, 0.0f);
                 return true;
             }
         }
@@ -43,6 +51,7 @@ public class Locked_Door : MonoBehaviour
             {
                 locked = false;
                 Debug.Log("Door unlocked with a " + TypeOfKey + " key!");
+                doorAnimator.Play("DoorOpen", 0, 0.0f);
                 return true;
             }
         }
