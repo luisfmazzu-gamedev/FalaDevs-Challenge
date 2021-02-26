@@ -20,20 +20,35 @@ using UnityEngine.UI;
 
 public class Locked_Door : MonoBehaviour
 {
-	public bool locked = true;
-	public bool haveKey = false;
+    [SerializeField]
+    private bool locked = true;
+    [SerializeField]
+    private string KeyTypeAccepted = "Any";
 
-	[Header("Door")]
-	public Transform Door_To_Open;
+    public bool Locked { get => locked; set => locked = value; }
+
+    public bool AttemptUnlock(List<string> TypeOfKeys)
+    {
+        if (KeyTypeAccepted == "Any")
+        {
+            if (TypeOfKeys.Count >= 1)
+            {
+                locked = false;
+                return true;
+            }
+        }
+        foreach (string TypeOfKey in TypeOfKeys)
+        {
+            if (TypeOfKey == KeyTypeAccepted)
+            {
+                locked = false;
+                Debug.Log("Door unlocked with a " + TypeOfKey + " key!");
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
-	private void Update()
-	{
-		RaycastHit hit;
-		if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 1f))
-		{
-		}
-	}
-
-	
 }

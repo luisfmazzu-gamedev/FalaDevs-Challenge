@@ -46,29 +46,32 @@ public class SelectableManager : MonoBehaviour
                 if (Input.GetKeyDown("e"))
                 {
                     Destroy(hit.transform.gameObject);
-                    playerInventory.HasKey = true;
 
                     txt_Action.text = "<b><Color=Lime>Parabéns, você encontrou a chave.</Color> \n" +
                         "<Color=Magenta>Vá até a porta para tentar abri-la.</Color></b>";
                     feedbackMessage = true;
+
+                    var obj = hit.transform.gameObject;
+                    var keyScript = obj.GetComponent<KeyItem>();
+
+                    playerInventory.receiveKey(keyScript.KeyType);
                 }
             }
             else if (hit.collider.CompareTag("Door"))
             {
                 var obj = hit.transform.gameObject;
                 var doorScript = obj.GetComponent<Locked_Door>();
-                if (doorScript.locked && playerInventory.HasKey)
+                if (doorScript.Locked && playerInventory.TypeKeys().Count > 0)
                 {
                     txt_Action.text = "<b><Color=Lime>A porta está trancada!</Color> \n" +
                     "<Color=Magenta>Aperte 'E' para destrancar a porta.</Color></b>";
 
                     if (Input.GetKeyDown("e"))
                     {
-                        doorScript.locked = false;
-
+                        bool success = doorScript.AttemptUnlock(playerInventory.TypeKeys());
                     }
                 }
-                else if (doorScript.locked)
+                else if (doorScript.Locked)
                 {
                     txt_Action.text = "<b><Color=Lime>A porta está trancada!</Color> \n" +
                     "<Color=Magenta>Desenvolva um script capaz de destrancar ela juntamente com uma chave, a chave está em cima de uma mesa em um dos cômodos. Pegue ela " +

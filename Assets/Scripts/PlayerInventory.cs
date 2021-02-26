@@ -4,7 +4,29 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    private bool hasKey = false;
+    private bool hasKeyType1 = false;
+    private bool hasKeyType2 = false;
 
-    public bool HasKey { get => hasKey; set => hasKey = value; }
+    public bool HasKeyType1 { get => hasKeyType1; }
+    public bool HasKeyType2 { get => hasKeyType2;}
+
+    public List<string> TypeKeys()
+    {
+        List<string> typeKeys = new List<string>();
+
+        if (hasKeyType1)
+            typeKeys.Add("Type1");
+        if (hasKeyType2)
+            typeKeys.Add("Type2");
+
+        return typeKeys;
+    }
+
+    public void receiveKey(string keyType)
+    {
+        if (keyType == "Type1")
+            hasKeyType1 = true;
+        if (keyType == "Type2")
+            hasKeyType2 = true;
+    }
 }
