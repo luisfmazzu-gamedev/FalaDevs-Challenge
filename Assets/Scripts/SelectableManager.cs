@@ -7,6 +7,7 @@ public class SelectableManager : MonoBehaviour
 {
     [SerializeField]
     private Text txt_Action;
+    private bool feedbackMessage = false;
     [SerializeField]
     private Material highlightMaterial; // Material that will be applied to selectable objects
     private Material currentObjectMaterial; // Stores the material of the object in order to return its material when unselected
@@ -20,13 +21,13 @@ public class SelectableManager : MonoBehaviour
     private void Update()
     {
         RaycastHit hit;
-        if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 1f))
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1.0f))
         {
             if (hit.collider.CompareTag("Key"))
             {
                 _selection = hit.transform;
                 var selectionRenderer = _selection.GetComponent<Renderer>();
-                if(selectionRenderer != null)
+                if (selectionRenderer != null)
                 {
                     if (!anyObjectBeingSelected)
                     {
@@ -49,39 +50,36 @@ public class SelectableManager : MonoBehaviour
 
                     txt_Action.text = "<b><Color=Lime>Parabéns, você encontrou a chave.</Color> \n" +
                         "<Color=Magenta>Vá até a porta para tentar abri-la.</Color></b>";
-
+                    feedbackMessage = true;
                 }
             }
             else if (hit.collider.CompareTag("Door"))
             {
-                /*var obj = hit.collider.gameObject;
-                var doorObject = obj.TryGetComponent<Locked_Door>();
-                if (hit.locked && haveKey)
+                var obj = hit.transform.gameObject;
+                var doorScript = obj.GetComponent<Locked_Door>();
+                if (doorScript.locked && playerInventory.HasKey)
                 {
-                    txt_DoorState.text = "<b><Color=Lime>A porta está trancada!</Color> \n" +
+                    txt_Action.text = "<b><Color=Lime>A porta está trancada!</Color> \n" +
                     "<Color=Magenta>Aperte 'E' para destrancar a porta.</Color></b>";
 
                     if (Input.GetKeyDown("e"))
                     {
-                        locked = false;
-                        haveKey = true;
-
-                        txt_DoorState.text = "<b><Color=Lime>Parabéns, você encontrou a chave.</Color> \n" +
-                            "<Color=Magenta>Vá até a porta para tentar abri-la.</Color></b>";
+                        doorScript.locked = false;
 
                     }
                 }
-                else if (locked)
+                else if (doorScript.locked)
                 {
-                    txt_DoorState.text = "<b><Color=Lime>A porta está trancada!</Color> \n" +
+                    txt_Action.text = "<b><Color=Lime>A porta está trancada!</Color> \n" +
                     "<Color=Magenta>Desenvolva um script capaz de destrancar ela juntamente com uma chave, a chave está em cima de uma mesa em um dos cômodos. Pegue ela " +
                     "e crie a lógica para destrancar a porta com esta chave.</Color></b>";
                 }
                 else
                 {
-                    txt_DoorState.text = "<b><Color=Lime>A porta foi destrancada!</Color> \n" +
+                    feedbackMessage = true;
+                    txt_Action.text = "<b><Color=Lime>A porta foi destrancada!</Color> \n" +
                     "<Color=Magenta>Parabéns!, está livre agora.</Color></b>";
-                }*/
+                }
             }
             else
             {
@@ -92,7 +90,26 @@ public class SelectableManager : MonoBehaviour
                     _selection = null;
                     anyObjectBeingSelected = false;
                 }
-
+                if (feedbackMessage)
+                {
+                    Invoke("DesactivateLabel", 3);
+                }
+                else
+                {
+                    feedbackMessage = false;
+                    DesactivateLabel();
+                }
+            }
+        }
+        else
+        {
+            if (feedbackMessage)
+            {
+                Invoke("DesactivateLabel", 3);
+            }
+            else
+            {
+                feedbackMessage = false;
                 DesactivateLabel();
             }
         }
