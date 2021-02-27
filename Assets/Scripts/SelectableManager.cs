@@ -86,35 +86,32 @@ public class SelectableManager : MonoBehaviour
             }
             else
             {
-                if (_selection != null)
-                {
-                    var selectionRenderer = _selection.GetComponent<Renderer>();
-                    selectionRenderer.material = currentObjectMaterial;
-                    _selection = null;
-                    anyObjectBeingSelected = false;
-                }
-                if (feedbackMessage)
-                {
-                    Invoke("DesactivateLabel", 3);
-                }
-                else
-                {
-                    feedbackMessage = false;
-                    DesactivateLabel();
-                }
+                undoSelection();
             }
         }
         else
         {
-            if (feedbackMessage)
-            {
-                Invoke("DesactivateLabel", 3);
-            }
-            else
-            {
-                feedbackMessage = false;
-                DesactivateLabel();
-            }
+            undoSelection();
+        }
+    }
+
+    private void undoSelection()
+    {
+        if (_selection != null)
+        {
+            var selectionRenderer = _selection.GetComponent<Renderer>();
+            selectionRenderer.material = currentObjectMaterial;
+            _selection = null;
+            anyObjectBeingSelected = false;
+        }
+        if (feedbackMessage)
+        {
+            Invoke("DesactivateLabel", 3);
+        }
+        else
+        {
+            feedbackMessage = false;
+            DesactivateLabel();
         }
     }
 
